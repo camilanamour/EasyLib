@@ -40,12 +40,13 @@ public class EmprestimoDao implements IEmprestimoDao{
 		ps.execute();
 		ps.close();
 		
-		sql = "UPDATE tb_volume SET status = 'emprestado' WHERE livro = ? AND editora = ? AND edicao = ?";
+		sql = "UPDATE tb_volume SET status = 'emprestado' WHERE livro = ? AND editora = ? AND edicao = ? AND numero = ?";
 
 		ps = con.prepareStatement(sql);
 		ps.setInt(1, emprestimo.getVolume().getEdicao().getLivro().getId());
 		ps.setInt(2, emprestimo.getVolume().getEdicao().getEditora().getId());
 		ps.setString(3, emprestimo.getVolume().getEdicao().getIsbn());
+		ps.setInt(4, emprestimo.getVolume().getNumero());
 		ps.execute();
 		ps.close();
 		
@@ -159,6 +160,7 @@ public class EmprestimoDao implements IEmprestimoDao{
 			emprestimo.setVolume(v);
 			emprestimo.setAluno(a);
 			emprestimo.setStatus(rs.getString("status"));
+			emprestimos.add(emprestimo);
 		}
 
 
@@ -336,7 +338,7 @@ public class EmprestimoDao implements IEmprestimoDao{
 	
 	@Override
 	public void atrasados() throws SQLException {
-		String sql = "UPDATE tb_emprestimo SET status = 'atrasado' WHERE data_devolucao = GETDATE()";
+		String sql = "UPDATE tb_emprestimo SET status = 'atrasado' WHERE data_devolucao = GETDATE() + 1";
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.execute();
 		ps.close();

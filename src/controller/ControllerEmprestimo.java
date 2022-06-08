@@ -3,6 +3,7 @@ package controller;
 import java.sql.SQLException;
 
 import entity.Aluno;
+import entity.Edicao;
 import entity.Emprestimo;
 import entity.Volume;
 import javafx.beans.property.IntegerProperty;
@@ -66,30 +67,28 @@ public class ControllerEmprestimo {
 	}
 	
 	public void devolver() throws SQLException, ClassNotFoundException {
-		Emprestimo e = toEntity();
-		eDao.devolvido(e);
+		eDao.devolvido(pesquisar());
 		listar();
 		limpar();
 	}
 	
 	public void renovar() throws SQLException, ClassNotFoundException {
-		Emprestimo e = toEntity();
-		eDao.renovar(e);
+		eDao.renovar(pesquisar());
 		listar();
 		limpar();
 	}
 	
 	public void cancelar() throws SQLException, ClassNotFoundException {
-		Emprestimo e = toEntity();
-		eDao.renovar(e);
+		eDao.renovar(pesquisar());
 		listar();
 		limpar();
 	}
 
-	public void pesquisar() throws SQLException {
+	public Emprestimo pesquisar() throws SQLException {
 		Emprestimo emp = new Emprestimo();
 		emp.setId(pesquisar.get());
 		eDao.pesquisar(emp);
+		return emp;
 	}
 
 	public void deletar(Emprestimo e) throws SQLException, ClassNotFoundException {
@@ -132,12 +131,15 @@ public class ControllerEmprestimo {
 		Emprestimo e = new Emprestimo();
 		Volume v = new Volume();
 		Aluno a = new Aluno();
+		Edicao e1 = new Edicao();
 		a.setRa(ra.get());
 		e.setId(id.get());
-		e.setDataEmprestimo(dataEmprestimo.get());
-		e.setDataDevolucao(dataDevolucao.get());
+		e.setDataEmprestimo(converterDataEUA(dataEmprestimo.get()));
+		e.setDataDevolucao(converterDataEUA(dataDevolucao.get()));
 		e.setAluno(aDao.pesquisar(a));
 		v.setNumero(numVolume.get());
+		e1.setIsbn(isbn.get());
+		v.setEdicao(e1);
 		e.setVolume(dDao.pesquisar(v));
 		a.setStatus(status.get());
 		return e;
@@ -146,11 +148,27 @@ public class ControllerEmprestimo {
 	public void fromEntity(Emprestimo e) {
 		if (e != null) {
 			id.set(e.getId());
-			dataEmprestimo.set(e.getDataEmprestimo());
-			dataDevolucao.set(e.getDataDevolucao());
+			dataEmprestimo.set(converterDataBR(e.getDataEmprestimo()));
+			dataDevolucao.set(converterDataBR(e.getDataDevolucao()));
 			volume.set(e.getVolume());
 			aluno.set(e.getAluno());
 			status.set(e.getStatus());
 		}
+	}
+	
+	public String converterDataBR (String data){
+		if(data != null){
+			String[] dataBR = data.split("-");
+			return dataBR[2]+"/"+dataBR[1]+"/"+dataBR[0];
+		}
+		return null;
+	}
+	
+	public String converterDataEUA (String data){
+		if(data != null){
+			String[] dataEUA = data.split("/");
+			return dataEUA[2]+"-"+dataEUA[1]+"-"+dataEUA[0];
+		}
+		return null;
 	}
 }

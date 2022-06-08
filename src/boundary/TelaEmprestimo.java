@@ -3,7 +3,6 @@ package boundary;
 import java.sql.SQLException;
 
 import controller.ControllerEmprestimo;
-import entity.Aluno;
 import entity.Emprestimo;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -11,7 +10,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -119,7 +117,7 @@ public class TelaEmprestimo {
 			} 
 		});
 		btnDevolvido = new Button("Devolvido");
-		btnEmprestar.setOnAction((e) -> {
+		btnDevolvido.setOnAction((e) -> {
 			try {
 				control.devolver();
 				new Alert(Alert.AlertType.INFORMATION, "Emprestimo devolvido com sucesso!").showAndWait();
@@ -128,7 +126,7 @@ public class TelaEmprestimo {
 			} 
 		});
 		btnRenovar = new Button("Renovar");
-		btnEmprestar.setOnAction((e) -> {
+		btnRenovar.setOnAction((e) -> {
 			try {
 				control.renovar();
 				new Alert(Alert.AlertType.INFORMATION, "Emprestimo renovado com sucesso!").showAndWait();
@@ -137,7 +135,7 @@ public class TelaEmprestimo {
 			} 
 		});
 		btnCancelar = new Button("Cancelar");
-		btnEmprestar.setOnAction((e) -> {
+		btnCancelar.setOnAction((e) -> {
 			try {
 				control.cancelar();
 				new Alert(Alert.AlertType.INFORMATION, "Emprestimo cancelado com sucesso!").showAndWait();

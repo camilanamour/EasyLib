@@ -31,8 +31,7 @@ public class Volume {
 	
 	@Override
 	public String toString() {
-		return "Volume [ edicao=" + edicao + ", numero=" + numero
-				+ ", status=" + status + "]";
+		return Integer.toString(numero);
 	}
 
 }
