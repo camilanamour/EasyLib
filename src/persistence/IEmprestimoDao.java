@@ -11,6 +11,10 @@ public interface IEmprestimoDao {
 	
 	public void inserir(Aluno aluno, Volume volume, Emprestimo emprestimo) throws SQLException;
 	public Emprestimo pesquisar(Emprestimo emprestimo) throws SQLException;
+	public void devolvido(Emprestimo emprestimo) throws SQLException;
+	public void renovar(Emprestimo emprestimo) throws SQLException;
+	public void cancelar(Emprestimo emprestimo) throws SQLException;
+	public void atrasados() throws SQLException;
 	public void excluir(Emprestimo emprestimo) throws SQLException;
 	public void excluirTodos(Emprestimo emprestimo) throws SQLException;
 	public List<Emprestimo> listar() throws SQLException;

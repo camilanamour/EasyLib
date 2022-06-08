@@ -22,6 +22,8 @@ import persistence.IVolumeDao;
 import persistence.VolumeDao;
 
 public class ControllerEmprestimo {
+	public IntegerProperty pesquisar = new SimpleIntegerProperty();
+	
 	public IntegerProperty id = new SimpleIntegerProperty(0);
 	public StringProperty dataEmprestimo = new SimpleStringProperty("");
 	public StringProperty dataDevolucao = new SimpleStringProperty("");
@@ -29,7 +31,7 @@ public class ControllerEmprestimo {
 	public ObjectProperty<Volume> volume = new SimpleObjectProperty<Volume>();
 	public ObjectProperty<Aluno> aluno = new SimpleObjectProperty<Aluno>();
 	public StringProperty ra = new SimpleStringProperty("");
-	public IntegerProperty isbn = new SimpleIntegerProperty(0);
+	public StringProperty isbn = new SimpleStringProperty();
 	public IntegerProperty numVolume = new SimpleIntegerProperty(0);
 	
 	
@@ -50,6 +52,7 @@ public class ControllerEmprestimo {
 			eDao = new EmprestimoDao();
 			aDao = new AlunoDao();
 			dDao = new VolumeDao();
+			eDao.atrasados();
 		} catch (ClassNotFoundException | SQLException e) {
 			new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait();
 		}
@@ -61,8 +64,31 @@ public class ControllerEmprestimo {
 		listar();
 		limpar();
 	}
+	
+	public void devolver() throws SQLException, ClassNotFoundException {
+		Emprestimo e = toEntity();
+		eDao.devolvido(e);
+		listar();
+		limpar();
+	}
+	
+	public void renovar() throws SQLException, ClassNotFoundException {
+		Emprestimo e = toEntity();
+		eDao.renovar(e);
+		listar();
+		limpar();
+	}
+	
+	public void cancelar() throws SQLException, ClassNotFoundException {
+		Emprestimo e = toEntity();
+		eDao.renovar(e);
+		listar();
+		limpar();
+	}
 
-	public void pesquisar(Emprestimo emp) throws SQLException {
+	public void pesquisar() throws SQLException {
+		Emprestimo emp = new Emprestimo();
+		emp.setId(pesquisar.get());
 		eDao.pesquisar(emp);
 	}
 

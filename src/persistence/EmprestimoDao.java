@@ -35,8 +35,17 @@ public class EmprestimoDao implements IEmprestimoDao{
 		ps.setInt(5, volume.getEdicao().getEditora().getId());
 		ps.setInt(6, volume.getNumero());
 		ps.setString(7, aluno.getRa());
-		ps.setString(8, emprestimo.getStatus());
+		ps.setString(8, "em dia");
 		
+		ps.execute();
+		ps.close();
+		
+		sql = "UPDATE tb_volume SET status = 'emprestado' WHERE livro = ? AND editora = ? AND edicao = ?";
+
+		ps = con.prepareStatement(sql);
+		ps.setInt(1, emprestimo.getVolume().getEdicao().getLivro().getId());
+		ps.setInt(2, emprestimo.getVolume().getEdicao().getEditora().getId());
+		ps.setString(3, emprestimo.getVolume().getEdicao().getIsbn());
 		ps.execute();
 		ps.close();
 		
@@ -266,6 +275,71 @@ public class EmprestimoDao implements IEmprestimoDao{
 		rs.close();
 		ps.close();
 		return emprestimos;
+	}
+
+	@Override
+	public void devolvido(Emprestimo emprestimo) throws SQLException {
+		String sql = "UPDATE tb_emprestimo SET status = 'devolvido' WHERE id_emprestimo = ?";
+
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1, emprestimo.getId());	
+		ps.execute();
+		ps.close();
+		
+		sql = "UPDATE tb_volume SET status = 'disponivel' WHERE livro = ? AND editora = ? AND edicao = ?";
+
+		ps = con.prepareStatement(sql);
+		ps.setInt(1, emprestimo.getVolume().getEdicao().getLivro().getId());
+		ps.setInt(2, emprestimo.getVolume().getEdicao().getEditora().getId());
+		ps.setString(3, emprestimo.getVolume().getEdicao().getIsbn());
+		
+		ps.execute();
+		ps.close();
+		
+	}
+
+	@Override
+	public void renovar(Emprestimo emprestimo) throws SQLException {
+		String sql = "UPDATE tb_emprestimo SET status = 'renovado', data_devolucao = DATEADD(DAY, 7, data_devolucao)  WHERE id_emprestimo = ?";
+
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1, emprestimo.getId());	
+		ps.execute();
+		ps.close();
+	}
+
+	@Override
+	public void cancelar(Emprestimo emprestimo) throws SQLException {
+		String sql = "UPDATE tb_emprestimo SET status = 'cancelado' WHERE id_emprestimo = ?";
+
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setInt(1, emprestimo.getId());	
+		ps.execute();
+		ps.close();
+		
+		sql = "UPDATE tb_aluno SET status = 'bloqueado' WHERE ra = ?";
+
+		ps = con.prepareStatement(sql);
+		ps.setString(1, emprestimo.getAluno().getRa());	
+		ps.execute();
+		ps.close();
+		
+		sql = "UPDATE tb_volume SET status = 'perdido' WHERE livro = ? AND editora = ? AND edicao = ?";
+
+		ps = con.prepareStatement(sql);
+		ps.setInt(1, emprestimo.getVolume().getEdicao().getLivro().getId());
+		ps.setInt(2, emprestimo.getVolume().getEdicao().getEditora().getId());
+		ps.setString(3, emprestimo.getVolume().getEdicao().getIsbn());
+		ps.execute();
+		ps.close();
+	}
+	
+	@Override
+	public void atrasados() throws SQLException {
+		String sql = "UPDATE tb_emprestimo SET status = 'atrasado' WHERE data_devolucao = GETDATE()";
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.execute();
+		ps.close();
 	}
 
 }
