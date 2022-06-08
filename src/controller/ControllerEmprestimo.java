@@ -29,10 +29,8 @@ public class ControllerEmprestimo {
 	public StringProperty dataEmprestimo = new SimpleStringProperty("");
 	public StringProperty dataDevolucao = new SimpleStringProperty("");
 	public StringProperty status = new SimpleStringProperty("");
-	public ObjectProperty<Volume> volume = new SimpleObjectProperty<Volume>();
-	public ObjectProperty<Aluno> aluno = new SimpleObjectProperty<Aluno>();
 	public StringProperty ra = new SimpleStringProperty("");
-	public StringProperty isbn = new SimpleStringProperty();
+	public StringProperty isbn = new SimpleStringProperty("");
 	public IntegerProperty numVolume = new SimpleIntegerProperty(0);
 	
 	
@@ -79,7 +77,7 @@ public class ControllerEmprestimo {
 	}
 	
 	public void cancelar() throws SQLException, ClassNotFoundException {
-		eDao.renovar(pesquisar());
+		eDao.cancelar(pesquisar());
 		listar();
 		limpar();
 	}
@@ -88,6 +86,7 @@ public class ControllerEmprestimo {
 		Emprestimo emp = new Emprestimo();
 		emp.setId(pesquisar.get());
 		eDao.pesquisar(emp);
+		this.fromEntity(emp);
 		return emp;
 	}
 
@@ -107,6 +106,8 @@ public class ControllerEmprestimo {
 		Emprestimo e = new Emprestimo();
 		this.fromEntity(e);
 		listar();
+		pesquisar.setValue(0);
+		status.setValue("Selecione");
 		coluna.setValue("Selecione");
 		filtro.setValue("");
 	}
@@ -133,7 +134,9 @@ public class ControllerEmprestimo {
 		Aluno a = new Aluno();
 		Edicao e1 = new Edicao();
 		a.setRa(ra.get());
-		e.setId(id.get());
+		if(id.get() != 0 && ra.get() == ""){
+			e.setId(id.get());			
+		}
 		e.setDataEmprestimo(converterDataEUA(dataEmprestimo.get()));
 		e.setDataDevolucao(converterDataEUA(dataDevolucao.get()));
 		e.setAluno(aDao.pesquisar(a));
@@ -150,8 +153,18 @@ public class ControllerEmprestimo {
 			id.set(e.getId());
 			dataEmprestimo.set(converterDataBR(e.getDataEmprestimo()));
 			dataDevolucao.set(converterDataBR(e.getDataDevolucao()));
-			volume.set(e.getVolume());
-			aluno.set(e.getAluno());
+			if(e.getVolume() == null){
+				isbn.setValue("");
+				numVolume.setValue(0);
+			} else {
+				isbn.set(e.getVolume().getISBN());
+				numVolume.set(e.getVolume().getNumero());
+			}
+			if(e.getAluno() == null){
+				ra.setValue("");
+			} else {
+				ra.set(e.getAluno().getRa());
+			}
 			status.set(e.getStatus());
 		}
 	}
